@@ -1,5 +1,6 @@
 require('dotenv').config();
 import express from 'express';
+import cors from 'cors';
 import { createConnection } from 'typeorm';
 
 const port = 3000;
@@ -8,6 +9,7 @@ const main = async () => {
   await createConnection()
 
   const app = express();
+  app.use(cors())
 
   app.get('/', (_, res) => {
     res.send('Hello World!');

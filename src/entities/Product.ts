@@ -1,5 +1,6 @@
 import { BaseEntity, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "./Category";
+import { Size } from "./Size";
 
 @Entity() 
 export class Product extends BaseEntity {
@@ -7,8 +8,18 @@ export class Product extends BaseEntity {
   id!: number
 
   @ManyToMany(() => Category)
-  @JoinTable()
-	categories!: Category
+  @JoinTable({ 
+    name: "product_categories", 
+    joinColumn: { 
+      name: "product", 
+      referencedColumnName: "id" 
+    }, 
+    inverseJoinColumn: { 
+      name: "category", 
+      referencedColumnName: "id"
+    } 
+  })
+	categories!: Category[]
 
   @Column({ unique: true }) 
   name!: string
@@ -37,7 +48,17 @@ export class Product extends BaseEntity {
   @Column()
   salePrice!: number
 
-  @ManyToMany(() => Category)
-  @JoinTable()
-  size!: number
+  @ManyToMany(() => Size)
+  @JoinTable({ 
+    name: "product_sizes", 
+    joinColumn: { 
+      name: "product", 
+      referencedColumnName: "id" 
+    }, 
+    inverseJoinColumn: { 
+      name: "size", 
+      referencedColumnName: "id"
+    } 
+  })
+  size: Size[]
 }

@@ -1,4 +1,6 @@
-export type CategoryType = {
-  id: number
-  cat_title: string
+export enum CategoryType {
+  MEN = 1,
+  WOMEN = 2,
+  UNISEX = 3,
+  KID = 4
 }
