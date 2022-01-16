@@ -16,11 +16,12 @@ const createProduct = async (req: Request, res: Response) => {
     size
   } = req.body
 
-  console.log(name)
+  const categoryToString: string = category.join(',')
+  const sizeToString: string = size.join(',')
 
   const product = Product.create({
     name,
-    category,
+    category: categoryToString,
     description,
     gender,
     image,
@@ -29,7 +30,7 @@ const createProduct = async (req: Request, res: Response) => {
     feature,
     sale,
     salePrice,
-    size
+    size: sizeToString
   });
 
   await product.save();
