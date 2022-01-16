@@ -1,5 +1,5 @@
-import { Product } from "../entities/Product"
-import { Request, Response } from "express"
+import { Product } from "../entities/Product";
+import { Request, Response } from "express";
 
 const createProduct = async (req: Request, res: Response) => {
   const {
@@ -13,11 +13,11 @@ const createProduct = async (req: Request, res: Response) => {
     feature,
     sale,
     salePrice,
-    size
-  } = req.body
+    size,
+  } = req.body;
 
-  const categoryToString: string = category.join(',')
-  const sizeToString: string = size.join(',')
+  const categoryToString: string = category.join(",");
+  const sizeToString: string = size.join(",");
 
   const product = Product.create({
     name,
@@ -30,16 +30,26 @@ const createProduct = async (req: Request, res: Response) => {
     feature,
     sale,
     salePrice,
-    size: sizeToString
+    size: sizeToString,
   });
 
   await product.save();
 
   return res.json(product);
-}
+};
 
-const getProduct = async (res: Response) => {
-  return res.json({"message": "hello"})
-}
+const getProductById = async (req: Request, res: Response) => {
+  const { productId } = req.params;
 
-export { createProduct, getProduct }
+  const product = await Product.findOne(parseInt(productId));
+
+  if (!product) {
+    return res.json({
+      message: "Product not found",
+    });
+  }
+
+  return res.json(product);
+};
+
+export { createProduct, getProductById };
