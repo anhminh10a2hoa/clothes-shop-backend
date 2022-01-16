@@ -8,7 +8,8 @@ export class Size extends BaseEntity {
 
   @Column({
     type: "enum",
-    enum: SizeType
+    enum: SizeType,
+    unique: true
   })
-  size!: number
+  size!: string
 }

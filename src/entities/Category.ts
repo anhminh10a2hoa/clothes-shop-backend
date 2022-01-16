@@ -8,7 +8,8 @@ export class Category extends BaseEntity {
 
   @Column({
     type: "enum",
-    enum: CategoryType
+    enum: CategoryType,
+    unique: true
   })
-  category!: number
+  category!: string
 }
