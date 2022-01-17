@@ -18,9 +18,15 @@ const createProduct = async (req: Request, res: Response) => {
     size,
   } = req.body;
 
+  const isProductExist = await Product.findOne({ where: { name }})
+  if(isProductExist) {
+    return res.status(406).json({
+      message: "Product already exist",
+    });
+  }
   const checked = await checkSizeAndCategoryValid(category, size)
   if(!checked) {
-    return res.json({
+    return res.status(406).json({
       message: "Invalid category or size",
     });
   }
@@ -43,7 +49,7 @@ const createProduct = async (req: Request, res: Response) => {
 
   await product.save();
 
-  return res.json(product);
+  return res.status(200).json(product);
 };
 
 const getProductById = async (req: Request, res: Response) => {
@@ -52,12 +58,12 @@ const getProductById = async (req: Request, res: Response) => {
   const product = await Product.findOne(parseInt(productId));
 
   if (!product) {
-    return res.json({
+    return res.status(404).json({
       message: "Product not found",
     });
   }
 
-  return res.json(product);
+  return res.status(200).json(product);
 };
 
 const getProduct = async (req: Request, res: Response) => {
@@ -76,7 +82,7 @@ const getProduct = async (req: Request, res: Response) => {
     .where(condition.join(" AND "))
     .getMany();
 
-  return res.json(products);
+  return res.status(200).json(products);
 };
 
 export { createProduct, getProductById, getProduct };
