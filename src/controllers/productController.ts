@@ -49,7 +49,7 @@ const createProduct = async (req: Request, res: Response) => {
 
   await product.save();
 
-  return res.status(200).json(product);
+  return res.status(201).json(product);
 };
 
 const getProductById = async (req: Request, res: Response) => {
@@ -69,13 +69,19 @@ const getProductById = async (req: Request, res: Response) => {
 const getProduct = async (req: Request, res: Response) => {
   let condition = [];
   if (req.query.size) {
-    condition.push(`product.size like '%${req.query.size.toString()}%'`);
-  } else if (req.query.category) {
+    for(let i of req.query.size.toString().split(",")) {
+      condition.push(`product.size like '%${i}%'`);
+    }
+  } 
+  if (req.query.category) {
+    for(let i of req.query.category.toString().split(",")) {
     condition.push(
-      `product.category like '%${req.query.category.toString()}%'`
+      `product.category like '%${i}%'`
     );
-  } else if (req.query.gender) {
-    condition.push(`product.gender like '%${req.query.gender.toString()}%'`);
+  }
+  } 
+  if (req.query.gender) {
+    condition.push(`product.gender like '%${req.query.gender}%'`);
   }
   const products = await getRepository(Product)
     .createQueryBuilder("product")
