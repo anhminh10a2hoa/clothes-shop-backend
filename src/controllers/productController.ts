@@ -1,5 +1,6 @@
 import { Product } from "../entities/Product";
 import { Request, Response } from "express";
+import { getRepository } from "typeorm";
 
 const createProduct = async (req: Request, res: Response) => {
   const {
@@ -52,4 +53,23 @@ const getProductById = async (req: Request, res: Response) => {
   return res.json(product);
 };
 
-export { createProduct, getProductById };
+const getProduct = async (req: Request, res: Response) => {
+  let condition = [];
+  if (req.query.size) {
+    condition.push(`product.size like '%${req.query.size.toString()}%'`);
+  } else if (req.query.category) {
+    condition.push(
+      `product.category like '%${req.query.category.toString()}%'`
+    );
+  } else if (req.query.gender) {
+    condition.push(`product.gender like '%${req.query.gender.toString()}%'`);
+  }
+  const products = await getRepository(Product)
+    .createQueryBuilder("product")
+    .where(condition.join(" AND "))
+    .getMany();
+
+  return res.json(products);
+};
+
+export { createProduct, getProductById, getProduct };
