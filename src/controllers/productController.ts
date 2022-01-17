@@ -1,6 +1,7 @@
 import { Product } from "../entities/Product";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
+import { checkSizeAndCategoryValid } from "../utils";
 
 const createProduct = async (req: Request, res: Response) => {
   const {
@@ -17,6 +18,12 @@ const createProduct = async (req: Request, res: Response) => {
     size,
   } = req.body;
 
+  const checked = await checkSizeAndCategoryValid(category, size)
+  if(!checked) {
+    return res.json({
+      message: "Invalid category or size",
+    });
+  }
   const categoryToString: string = category.join(",");
   const sizeToString: string = size.join(",");
 
