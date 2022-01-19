@@ -91,4 +91,20 @@ const getProduct = async (req: Request, res: Response) => {
   return res.status(200).json(products);
 };
 
-export { createProduct, getProductById, getProduct };
+const deleteProduct = async (req: Request, res: Response) => {
+  const { productId } = req.params;
+
+  const product = await Product.findOne(parseInt(productId));
+  if(product) {
+    await Product.remove(product);
+
+    return res.status(200).json({
+      message: `Product with ${productId} was deleted successfully`
+    });
+  }
+  return res.status(404).json({
+    message: `Product with ${productId} not found`,
+  });
+}
+
+export { createProduct, getProductById, getProduct, deleteProduct };
