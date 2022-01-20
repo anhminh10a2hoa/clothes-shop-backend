@@ -1,6 +1,6 @@
 import { Product } from "../entities/Product";
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, getConnection } from "typeorm";
 import { checkSizeAndCategoryValid } from "../utils";
 
 const createProduct = async (req: Request, res: Response) => {
@@ -9,7 +9,6 @@ const createProduct = async (req: Request, res: Response) => {
     category,
     description,
     gender,
-    image,
     price,
     status,
     feature,
@@ -17,11 +16,17 @@ const createProduct = async (req: Request, res: Response) => {
     salePrice,
     size,
   } = req.body;
+  let imageName: string = "";
 
+  const file: Express.Multer.File | undefined = req.file;
+  if(file) {
+    imageName = file.filename;
+  }
+  
   const isProductExist = await Product.findOne({ where: { name }})
   if(isProductExist) {
     return res.status(406).json({
-      message: "Product already exist",
+      message: "Product name have to be unique",
     });
   }
   const checked = await checkSizeAndCategoryValid(category, size)
@@ -38,7 +43,7 @@ const createProduct = async (req: Request, res: Response) => {
     category: categoryToString,
     description,
     gender,
-    image,
+    imageName,
     price,
     status,
     feature,
@@ -107,4 +112,64 @@ const deleteProduct = async (req: Request, res: Response) => {
   });
 }
 
-export { createProduct, getProductById, getProduct, deleteProduct };
+const updateProduct = async (req: Request, res: Response) => {
+  const { productId } = req.params;
+
+  const product = await Product.findOne(parseInt(productId));
+
+  if(!product) { 
+    return res.status(404).json({
+      message: `Product with ${productId} not found`,
+    });
+  }
+
+  // const {
+  //   name,
+  //   category,
+  //   description,
+  //   gender,
+  //   price,
+  //   status,
+  //   feature,
+  //   sale,
+  //   salePrice,
+  //   size,
+  // } = req.body;
+
+  // const isProductExist = await Product.findOne({ where: { name }})
+  // if(isProductExist) {
+  //   return res.status(406).json({
+  //     message: "Product name have to be unique",
+  //   });
+  // }
+  // const checked = await checkSizeAndCategoryValid(category, size)
+  // if(!checked) {
+  //   return res.status(406).json({
+  //     message: "Invalid category or size",
+  //   });
+  // }
+
+  // const categoryToString: string = category.join(",");
+  // const sizeToString: string = size.join(",");
+
+  let imageName: string = "";
+
+  const file: Express.Multer.File | undefined = req.file;
+  console.log(file)
+  if(file) {
+    imageName = file.filename;
+  }
+
+  const newProduct = await getConnection()
+  .createQueryBuilder()
+  .update(Product)
+  .set({
+    imageName,
+  })
+  .where("id = :id", { id: parseInt(productId) })
+  .execute();
+
+  return res.status(200).json(newProduct);
+}
+
+export { createProduct, getProductById, getProduct, deleteProduct, updateProduct };

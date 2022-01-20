@@ -22,7 +22,7 @@ export class Product extends BaseEntity {
   gender!: string
 
   @Column() 
-  image!: string
+  imageName!: string
 
   @Column()
   price!: number
