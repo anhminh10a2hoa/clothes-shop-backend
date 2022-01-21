@@ -1,9 +1,40 @@
 import { Product } from "../entities/Product";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { getRepository, getConnection } from "typeorm";
 import { checkSizeAndCategoryValid } from "../utils";
+import multer from 'multer';
 
-const createProduct = async (req: Request, res: Response) => {
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    if(
+      file.mimetype === 'image/jpeg' || 
+      file.mimetype === 'image/jpg'  || 
+      file.mimetype === 'image/png'  ||
+      file.mimetype === 'image/JPEG' ||
+      file.mimetype === 'image/JPG'  ||
+      file.mimetype === 'image/PNG'
+    ) {
+      cb(null, './public/images/')
+    } else {
+      cb(new Error('Invalid image'), false)
+    }
+  },
+  filename: function (req, file, cb) {
+    const mimeExtension = {
+      'image/jpeg': '.jpeg',
+      'image/jpg': '.jpg',
+      'image/png': '.png',
+      'image/JPEG': '.JPEG',
+      'image/JPG': '.JPG',
+      'image/PNG': '.PNG',
+    }
+    cb(null, file.fieldname + '-' + Date.now() + mimeExtension[file.mimetype])
+  }
+})
+
+const upload = multer({storage: storage});
+
+const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   const {
     name,
     category,
@@ -16,12 +47,6 @@ const createProduct = async (req: Request, res: Response) => {
     salePrice,
     size,
   } = req.body;
-  let imageName: string = "";
-
-  const file: Express.Multer.File | undefined = req.file;
-  if(file) {
-    imageName = file.filename;
-  }
   
   const isProductExist = await Product.findOne({ where: { name }})
   if(isProductExist) {
@@ -37,13 +62,15 @@ const createProduct = async (req: Request, res: Response) => {
   }
   const categoryToString: string = category.join(",");
   const sizeToString: string = size.join(",");
+  if(req.file) {
+    uploadProductImage(req, res, next)
+  }
 
   const product = Product.create({
     name,
     category: categoryToString,
     description,
     gender,
-    imageName,
     price,
     status,
     feature,
@@ -123,48 +150,49 @@ const updateProduct = async (req: Request, res: Response) => {
     });
   }
 
-  // const {
-  //   name,
-  //   category,
-  //   description,
-  //   gender,
-  //   price,
-  //   status,
-  //   feature,
-  //   sale,
-  //   salePrice,
-  //   size,
-  // } = req.body;
+  const {
+    name,
+    category,
+    description,
+    gender,
+    price,
+    status,
+    feature,
+    sale,
+    salePrice,
+    size,
+  } = req.body;
 
-  // const isProductExist = await Product.findOne({ where: { name }})
-  // if(isProductExist) {
-  //   return res.status(406).json({
-  //     message: "Product name have to be unique",
-  //   });
-  // }
-  // const checked = await checkSizeAndCategoryValid(category, size)
-  // if(!checked) {
-  //   return res.status(406).json({
-  //     message: "Invalid category or size",
-  //   });
-  // }
-
-  // const categoryToString: string = category.join(",");
-  // const sizeToString: string = size.join(",");
-
-  let imageName: string = "";
-
-  const file: Express.Multer.File | undefined = req.file;
-  console.log(file)
-  if(file) {
-    imageName = file.filename;
+  const isProductExist = await Product.findOne({ where: { name }})
+  if(isProductExist) {
+    return res.status(406).json({
+      message: "Product name have to be unique",
+    });
   }
+  const checked = await checkSizeAndCategoryValid(category, size)
+  if(!checked) {
+    return res.status(406).json({
+      message: "Invalid category or size",
+    });
+  }
+
+  const categoryToString: string = category.join(",");
+  const sizeToString: string = size.join(",");
 
   const newProduct = await getConnection()
   .createQueryBuilder()
   .update(Product)
   .set({
-    imageName,
+    name,
+    category: categoryToString,
+    description,
+    gender,
+    price,
+    status,
+    feature,
+    sale,
+    salePrice,
+    size: sizeToString,
   })
   .where("id = :id", { id: parseInt(productId) })
   .execute();
@@ -172,4 +200,24 @@ const updateProduct = async (req: Request, res: Response) => {
   return res.status(200).json(newProduct);
 }
 
-export { createProduct, getProductById, getProduct, deleteProduct, updateProduct };
+const uploadProductImage = async (req: Request, res: Response, next: NextFunction) => {
+  const file = req.file;
+  console.log(file)
+  if(!file) {
+    const error = new Error('Please upload a file');
+    return next(error);
+  }
+  const { productId } = req.params;
+  const newProduct = await getConnection()
+  .createQueryBuilder()
+  .update(Product)
+  .set({
+    imageName: file.filename
+  })
+  .where("id = :id", { id: parseInt(productId) })
+  .execute();
+
+  return res.status(200).json(newProduct);
+}
+
+export { createProduct, getProductById, getProduct, deleteProduct, updateProduct, uploadProductImage, upload };
