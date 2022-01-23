@@ -1,4 +1,4 @@
-import { GenderType } from "../types/GenderType";
+import { GenderType } from "../enums/gender.enum";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity() 

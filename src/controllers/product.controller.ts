@@ -1,11 +1,11 @@
-import { Product } from "../entities/Product";
+import multer from 'multer';
+import { Product } from "../entities/product.entity";
 import { Request, Response, NextFunction } from "express";
 import { getRepository, getConnection } from "typeorm";
 import { checkSizeAndCategoryValid } from "../utils";
-import multer from 'multer';
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (_: Express.Request, file: Express.Multer.File, callback: (error: Error | null, destination: string) => void) {
     if(
       file.mimetype === 'image/jpeg' || 
       file.mimetype === 'image/jpg'  || 
@@ -14,12 +14,13 @@ const storage = multer.diskStorage({
       file.mimetype === 'image/JPG'  ||
       file.mimetype === 'image/PNG'
     ) {
-      cb(null, './public/images/')
+      callback(null, './public/images/')
     } else {
-      cb(new Error('Invalid image'), false)
+      // @ts-ignore
+      callback(new Error('Invalid image'), false)
     }
   },
-  filename: function (req, file, cb) {
+  filename: function (_: Request, file: Express.Multer.File, callback: (error: Error | null, filename: string) => void) {
     const mimeExtension = {
       'image/jpeg': '.jpeg',
       'image/jpg': '.jpg',
@@ -28,7 +29,7 @@ const storage = multer.diskStorage({
       'image/JPG': '.JPG',
       'image/PNG': '.PNG',
     }
-    cb(null, file.fieldname + '-' + Date.now() + mimeExtension[file.mimetype])
+    callback(null, file.fieldname + '-' + Date.now() + mimeExtension[file.mimetype])
   }
 })
 
@@ -39,7 +40,7 @@ const createProduct = async (req: Request, res: Response, next: NextFunction) =>
     name,
     category,
     description,
-    gender,
+    gender, 
     price,
     status,
     feature,

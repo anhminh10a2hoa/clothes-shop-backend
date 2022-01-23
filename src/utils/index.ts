@@ -1,5 +1,5 @@
-import { Size } from "../entities/Size";
-import { Category } from "../entities/Category"
+import { Size } from "../entities/size.entity";
+import { Category } from "../entities/category.entity"
 
 export const isStringArray = (test: any[], type: string): boolean => {
   return Array.isArray(test) && test.every((value) => typeof value === type)

@@ -7,7 +7,7 @@ import {
   deleteProduct,
   uploadProductImage,
   upload
-} from "../controllers/productController";
+} from "../controllers/product.controller";
 
 const productRouter = express.Router();
 

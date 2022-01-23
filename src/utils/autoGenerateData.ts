@@ -1,7 +1,7 @@
-import { SizeType } from "../types/SizeType";
-import { Category } from "../entities/Category";
-import { CategoryType } from "../types/CategoryType";
-import { Size } from "../entities/Size";
+import { SizeType } from "../enums/size.enum";
+import { Category } from "../entities/category.entity";
+import { CategoryType } from "../enums/category.enum";
+import { Size } from "../entities/size.entity";
 
 const generateData = async() => {
   let newCat: Category;

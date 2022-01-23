@@ -1,15 +1,15 @@
-import { CategoryType } from "../types/CategoryType";
+import { SizeType } from "../enums/size.enum";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity() 
-export class Category extends BaseEntity {
+export class Size extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number
 
   @Column({
     type: "enum",
-    enum: CategoryType,
+    enum: SizeType,
     unique: true
   })
-  category!: string
+  size!: string
 }
