@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
       file.mimetype === 'image/JPG'  ||
       file.mimetype === 'image/PNG'
     ) {
-      callback(null, process.env.IMAGE_FOLDER_PATH ? process.env.IMAGE_FOLDER_PATH : './public/images/')
+      callback(null, process.env.PRODUCT_IMAGE_FOLDER_PATH ? process.env.PRODUCT_IMAGE_FOLDER_PATH : './public/images/products')
     } else {
       // @ts-ignore
       callback(new Error('Invalid image'), false)
@@ -217,7 +217,7 @@ const uploadProductImage = async (req: Request, res: Response, next: NextFunctio
     });
   }
 
-  const oldProductImagePath = (process.env.IMAGE_FOLDER_PATH ? process.env.IMAGE_FOLDER_PATH : './public/images/') + product.imageName
+  const oldProductImagePath = (process.env.PRODUCT_IMAGE_FOLDER_PATH ? process.env.PRODUCT_IMAGE_FOLDER_PATH : './public/images/') + product.imageName
   const newProduct = await getConnection()
   .createQueryBuilder()
   .update(Product)

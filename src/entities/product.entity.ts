@@ -1,5 +1,5 @@
 import { GenderType } from "../enums/gender.enum";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from "typeorm";
 
 @Entity() 
 @Unique(['name'])
@@ -22,7 +22,9 @@ export class Product extends BaseEntity {
   }) 
   gender!: string
 
-  @Column() 
+  @Column({
+    default: "no-image.png"
+  }) 
   imageName!: string
 
   @Column()
@@ -42,4 +44,12 @@ export class Product extends BaseEntity {
 
   @Column() 
   size!: string
+
+  @Column()
+	@CreateDateColumn()
+	createdAt: Date
+
+	@Column()
+	@UpdateDateColumn()
+	updatedAt: Date
 }
