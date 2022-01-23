@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
       file.mimetype === 'image/JPG'  ||
       file.mimetype === 'image/PNG'
     ) {
-      callback(null, process.env.PRODUCT_IMAGE_FOLDER_PATH ? process.env.PRODUCT_IMAGE_FOLDER_PATH : './public/images/products')
+      callback(null, process.env.PRODUCT_IMAGE_FOLDER_PATH ? process.env.PRODUCT_IMAGE_FOLDER_PATH : './public/images/productsmi')
     } else {
       // @ts-ignore
       callback(new Error('Invalid image'), false)
