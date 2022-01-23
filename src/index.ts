@@ -18,7 +18,7 @@ const main = async () => {
   app.use(bodyParser.urlencoded({ extended: true }));
   dotenv.config();
 
-  generateData();
+  // generateData();
 
   app.get('/', (_, res) => {
     res.send('Hello World!');
