@@ -1,4 +1,5 @@
 import multer from 'multer';
+import fs from 'fs';
 import { Product } from "../entities/product.entity";
 import { Request, Response, NextFunction } from "express";
 import { getRepository, getConnection } from "typeorm";
@@ -14,7 +15,7 @@ const storage = multer.diskStorage({
       file.mimetype === 'image/JPG'  ||
       file.mimetype === 'image/PNG'
     ) {
-      callback(null, './public/images/')
+      callback(null, process.env.IMAGE_FOLDER_PATH ? process.env.IMAGE_FOLDER_PATH : './public/images/')
     } else {
       // @ts-ignore
       callback(new Error('Invalid image'), false)
@@ -203,12 +204,20 @@ const updateProduct = async (req: Request, res: Response) => {
 
 const uploadProductImage = async (req: Request, res: Response, next: NextFunction) => {
   const file = req.file;
-  console.log(file)
   if(!file) {
     const error = new Error('Please upload a file');
     return next(error);
   }
   const { productId } = req.params;
+
+  const product: Product | undefined = await Product.findOne(parseInt(productId));
+  if(!product) {
+    return res.status(404).json({
+      message: `Product with ${productId} not found`,
+    });
+  }
+
+  const oldProductImagePath = (process.env.IMAGE_FOLDER_PATH ? process.env.IMAGE_FOLDER_PATH : './public/images/') + product.imageName
   const newProduct = await getConnection()
   .createQueryBuilder()
   .update(Product)
@@ -217,6 +226,16 @@ const uploadProductImage = async (req: Request, res: Response, next: NextFunctio
   })
   .where("id = :id", { id: parseInt(productId) })
   .execute();
+
+  console.log(oldProductImagePath)
+
+  try {
+    fs.unlinkSync(oldProductImagePath)
+    console.log("Successfully deleted the old product image");
+    //file removed
+  } catch(err) {
+    console.error(err)
+  }
 
   return res.status(200).json(newProduct);
 }
