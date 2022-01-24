@@ -33,7 +33,7 @@ export class Product extends BaseEntity {
   @Column({
     default: "no-image.png",
   })
-  imageName!: string;
+  imageName: string;
 
   @Column()
   price!: number;
