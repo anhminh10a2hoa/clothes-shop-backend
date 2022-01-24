@@ -1,15 +1,15 @@
 import { SizeType } from "../enums/size.enum";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity() 
+@Entity()
 export class Size extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id!: number
+  id!: number;
 
   @Column({
     type: "enum",
     enum: SizeType,
-    unique: true
+    unique: true,
   })
-  size!: string
+  size!: string;
 }

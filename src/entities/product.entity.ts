@@ -1,55 +1,63 @@
 import { GenderType } from "../enums/gender.enum";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Unique,
+} from "typeorm";
 
-@Entity() 
-@Unique(['name'])
+@Entity()
+@Unique(["name"])
 export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id!: number
+  id!: number;
 
-  @Column() 
-  category!: string
+  @Column()
+  category!: string;
 
-  @Column({ unique: true }) 
-  name!: string
+  @Column({ unique: true })
+  name!: string;
 
-  @Column() 
-  description!: string
+  @Column()
+  description!: string;
 
   @Column({
     type: "enum",
-    enum: GenderType
-  }) 
-  gender!: string
+    enum: GenderType,
+  })
+  gender!: string;
 
   @Column({
-    default: "no-image.png"
-  }) 
-  imageName!: string
+    default: "no-image.png",
+  })
+  imageName!: string;
 
   @Column()
-  price!: number
+  price!: number;
 
   @Column()
-  status!: boolean
+  status!: boolean;
 
   @Column()
-  feature!: boolean
+  feature!: boolean;
 
   @Column()
-  sale!: boolean
+  sale!: boolean;
 
   @Column()
-  salePrice!: number
-
-  @Column() 
-  size!: string
+  salePrice!: number;
 
   @Column()
-	@CreateDateColumn()
-	createdAt: Date
+  size!: string;
 
-	@Column()
-	@UpdateDateColumn()
-	updatedAt: Date
+  @Column()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Column()
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
