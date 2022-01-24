@@ -6,16 +6,13 @@ import User from "../entities/user.entity";
 class AuthController {
   constructor() {}
 
-  loginView = (_: Request, res: Response) => {
-    res.render("user_login");
-  };
-
   loginAuth = async (req: Request, res: Response) => {
     //Check if username and password are set
     let { username, password } = req.body;
     if (!(username && password)) {
-      res.status(400).send();
-      return;
+      return res.status(400).json({
+        message: "Please enter a username and password",
+      });
     }
 
     const userRepository = getRepository(User);
@@ -25,13 +22,16 @@ class AuthController {
     try {
       user = await userRepository.findOneOrFail({ where: { username } });
     } catch (error) {
-      res.status(401).send();
+      return res.status(401).json({
+        message: "Check your username and password",
+      });
     }
 
     //Check if encrypted password match
     if (!user.unencrypted_password_is_valid(password)) {
-      res.status(401).send();
-      return;
+      return res.status(401).json({
+        message: "Wrong password or username",
+      });
     }
 
     //Sing JWT, valid for 1 hour
@@ -54,15 +54,18 @@ class AuthController {
       httpOnly: true,
     });
 
-    //Send the jwt in the response
-    // res.send(user)
-    res.redirect("/index");
+    return res.status(200).json({
+      message: "Logged in successfully",
+    });
   };
 
-  logout = (req: Request, res: Response) => {
+  logout = (_: Request, res: Response) => {
     res.clearCookie("jwt");
     res.clearCookie("user");
-    res.render("user_login");
+
+    return res.status(200).json({
+      message: "Logged out successfully",
+    });
   };
 }
 
