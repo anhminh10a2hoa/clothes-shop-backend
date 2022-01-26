@@ -7,14 +7,14 @@ class UserController {
 	getAll = async (_: Request, res: Response) => {
 		//Get data from database
 		const databaseRepository = getRepository(User)
-		const selectAttributes: any = { select: ['id', 'name', 'username', 'roll'] }
+		const selectAttributes: any = { select: ['id', 'name', 'username'] }
 		const data = await databaseRepository.find(selectAttributes)
 
 		//Send the data object
 		res.status(200).json({ status: 'success', message: 'Data Found', error: false, data: data })
 	}
 
-	getOneById = async (req: Request, res: Response) => {
+	getUserById = async (req: Request, res: Response) => {
 		//Get the ID from the url
 		const uuid: string = req.params.id
 
@@ -29,7 +29,7 @@ class UserController {
 		}
 	}
 
-	create = async (req: Request, res: Response) => {
+	createUser = async (req: Request, res: Response) => {
 		//Get parameters from the body
 		let { username, password, name, email } = req.body
 
@@ -54,15 +54,15 @@ class UserController {
 		try {
 			await databaseRepository.save(data)
 		} catch (e) {
-			res.status(200).json({ status: 'fail', message: e.message, error: e, data: false })
+			res.status(404).json({ status: 'fail', message: e.message, error: e, data: false })
 			return
 		}
 
 		//If all ok, send 201 response
-		res.status(201).send('User created')
+		return res.status(201).send('User created')
 	}
 
-	update = async (req: Request, res: Response) => {
+	updateUser = async (req: Request, res: Response) => {
 		//Get the ID from the url
 		const id = req.params.id
 		let data = new User()
@@ -87,29 +87,27 @@ class UserController {
 
 		const errors = await validate(data)
 		if (errors.length > 0) {
-			res.status(400).send(errors)
-			return
+			return res.status(400).send(errors)
 		}
 
 		//Try to safe, if fails, that means username already in use
 		try {
 			await databaseRepository.save(data)
 		} catch (e) {
-			res.status(409).send('username already in use')
+			res.status(409).send('Username already exists')
 			return
 		}
 		//After all send a 204 (no content, but accepted) response
-		res.status(204).send()
+		return res.status(204).send()
 	}
 
-	destroy = async (req: Request, res: Response) => {
+	deleteUser = async (req: Request, res: Response) => {
 		//Get the ID from the url
 		const id = req.params.id
 
 		const databaseRepository = getRepository(User)
-		let data: User
 		try {
-			data = await databaseRepository.findOneOrFail(id)
+			await databaseRepository.findOneOrFail(id)
 		} catch (error) {
 			res.status(404).send('User not found')
 			return

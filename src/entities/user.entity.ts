@@ -28,18 +28,6 @@ export default class User {
   @Column({ nullable: true })
   email: String;
 
-  @Column({ nullable: true })
-  mobile: String;
-
-  @Column({ nullable: true })
-  address: String;
-
-  @Column({ default: "default.jpg" })
-  avatar: String;
-
-  @Column()
-  roll: String;
-
   @Column()
   @CreateDateColumn()
   createdAt: Date;

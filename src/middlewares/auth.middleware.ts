@@ -49,10 +49,10 @@ const _checkJwt = async (req: Request, res: Response, next: any) => {
 
   // The token is valid for 1 hour
   // We want to send a new token on every request
-  const { id, username, roll } = jwtPayload;
+  const { id, username } = jwtPayload;
   //Sing JWT, valid for 1 hour
   const jwtToken = jwt.sign(
-    { id, username, roll },
+    { id, username },
     process.env.JWT_TOKEN ? process.env.JWT_TOKEN : "abcdef123",
     {
       expiresIn: process.env.JWT_TOKEN_EXPIRES_IN_HOUR,

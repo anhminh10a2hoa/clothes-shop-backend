@@ -13,7 +13,7 @@ import {
 @Unique(["name"])
 export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
   @Column()
   category!: string;
@@ -45,10 +45,10 @@ export class Product extends BaseEntity {
   feature!: boolean;
 
   @Column()
-  sale!: boolean;
+  sale: boolean;
 
   @Column()
-  salePrice!: number;
+  salePrice: number;
 
   @Column()
   size!: string;

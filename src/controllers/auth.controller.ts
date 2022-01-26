@@ -36,7 +36,7 @@ class AuthController {
 
     //Sing JWT, valid for 1 hour
     const jwtToken = jwt.sign(
-      { id: user.id, username: user.username, roll: user.roll },
+      { id: user.id, username: user.username },
       process.env.JWT_TOKEN,
       { expiresIn: process.env.JWT_TOKEN_EXPIRES_IN_HOUR }
     );
