@@ -10,23 +10,26 @@ export const checkJwt = async (
   _checkJwt(req, res, next);
 };
 
-/////  if 3rd param is 'redirect' & if jwt cookie token is valid then just redirected to home page
 export const isLogged = async (
   req: Request,
   res: Response,
   _: NextFunction
 ) => {
-  // const redirectMethod =
-  _checkJwt(req, res, "redirect");
+  _checkJwt(req, res, "isLoggedIn");
 };
 
 //////// Method  created Code Reusablity of ChecKJWT & isLogged both method using 95% same Code
 const _checkJwt = async (req: Request, res: Response, next: any) => {
   //Get the jwt token from the head
   // const token = <string>req.headers['auth']
-  let jwtCookieToken = req.cookies.jwt;
+  if(!req.headers.cookie) {
+    return res.status(401).json({
+      error: "401 (unauthorized), Please login first",
+    });
+  }
+  let jwtCookieToken = req.headers.cookie.split('jwt=')[1];
   let jwtPayload;
-  // console.log(jwtCookieToken)
+  console.log(jwtCookieToken)
 
   //Try to validate the token and get data
   try {
@@ -40,7 +43,7 @@ const _checkJwt = async (req: Request, res: Response, next: any) => {
   } catch (err) {
     // If token is not valid, respond with 401 (unauthorized)
     // Throw an error just in case anything goes wrong with verification
-    res.status(401).render("teacher_login", {
+    res.status(401).json({
       error: "401 (unauthorized), Please login first",
     });
     throw new Error(err);
@@ -77,9 +80,7 @@ const _checkJwt = async (req: Request, res: Response, next: any) => {
   });
 
   //Call the next middleware or controller
-  if (next == "redirect") {
-    res.redirect("index");
-  } else {
-    next();
+  if (next !== "isLoggedIn") {
+    return next();
   }
 };

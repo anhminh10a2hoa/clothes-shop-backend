@@ -6,7 +6,7 @@ import User from "../entities/user.entity";
 class AuthController {
   constructor() {}
 
-  loginAuth = async (req: Request, res: Response) => {
+  login = async (req: Request, res: Response) => {
     //Check if username and password are set
     let { username, password } = req.body;
     if (!(username && password)) {
