@@ -249,11 +249,6 @@ class ProductController {
         message: `Product with ${productId} not found`,
       });
     }
-  
-    const oldProductImagePath =
-      (process.env.PRODUCT_IMAGE_FOLDER_PATH
-        ? process.env.PRODUCT_IMAGE_FOLDER_PATH + '/'
-        : "./public/images/") + product.imageName;
       
     try {
       await getConnection()
@@ -268,14 +263,19 @@ class ProductController {
       return res.status(400).send(err)
     }
   
-    try {
-      fs.unlinkSync(oldProductImagePath);
-      console.log("Successfully deleted the old product image");
-      //file removed
-    } catch (err) {
-      return res.status(400).send(err)
+    if(product.imageName !== 'default-product-image.png') {
+      const oldProductImagePath =
+      (process.env.PRODUCT_IMAGE_FOLDER_PATH
+        ? (process.env.PRODUCT_IMAGE_FOLDER_PATH + '/')
+        : "./public/images/") + product.imageName;
+      try {
+        fs.unlinkSync(oldProductImagePath);
+        console.log("Successfully deleted the old product image");
+        //file removed
+      } catch (err) {
+        return res.status(400).send(err)
+      }
     }
-  
     res.status(200).json({ status: 'success', message: 'Upload product image successfully', error: false })
   }
 }
