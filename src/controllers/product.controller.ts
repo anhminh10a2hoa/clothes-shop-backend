@@ -25,7 +25,7 @@ class ProductController {
           null,
           process.env.PRODUCT_IMAGE_FOLDER_PATH
             ? process.env.PRODUCT_IMAGE_FOLDER_PATH
-            : "./public/images/productsmi"
+            : "./public/images"
         );
       } else {
         // @ts-ignore
@@ -252,9 +252,11 @@ class ProductController {
   
     const oldProductImagePath =
       (process.env.PRODUCT_IMAGE_FOLDER_PATH
-        ? process.env.PRODUCT_IMAGE_FOLDER_PATH
+        ? process.env.PRODUCT_IMAGE_FOLDER_PATH + '/'
         : "./public/images/") + product.imageName;
-    const newProduct = await getConnection()
+      
+    try {
+      await getConnection()
       .createQueryBuilder()
       .update(Product)
       .set({
@@ -262,6 +264,9 @@ class ProductController {
       })
       .where("id = :id", { id: parseInt(productId) })
       .execute();
+    } catch (err) {
+      return res.status(400).send(err)
+    }
   
     try {
       fs.unlinkSync(oldProductImagePath);
@@ -271,7 +276,7 @@ class ProductController {
       return res.status(400).send(err)
     }
   
-    res.status(200).json({ status: 'success', message: 'Upload product image successfully', error: false, data: newProduct })
+    res.status(200).json({ status: 'success', message: 'Upload product image successfully', error: false })
   }
 }
 
