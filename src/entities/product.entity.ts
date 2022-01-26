@@ -31,7 +31,7 @@ export class Product extends BaseEntity {
   gender!: string;
 
   @Column({
-    default: "no-image.png",
+    default: "default-product-image.png",
   })
   imageName: string;
 
