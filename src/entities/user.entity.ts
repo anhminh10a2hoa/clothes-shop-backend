@@ -8,6 +8,7 @@ import {
   Unique,
 } from "typeorm";
 import * as bcrypt from "bcryptjs";
+import { UserRole } from "../enums/userRole.enum";
 
 @EntityRepository()
 @Entity()
@@ -27,6 +28,13 @@ export default class User {
 
   @Column({ nullable: true })
   email: String;
+
+  @Column({
+    type: "enum",
+    default: UserRole.USER,
+    enum: UserRole,
+  })
+  role: String;
 
   @Column()
   @CreateDateColumn()
