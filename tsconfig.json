@@ -26,6 +26,7 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
+    "skipLibCheck": true,
     "suppressImplicitAnyIndexErrors": true
   },
   "exclude": [
