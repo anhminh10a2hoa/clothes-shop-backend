@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { createConnection } from "typeorm";
+import { createDatabase } from "typeorm-extension";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import * as dotenv from "dotenv";
@@ -12,6 +13,7 @@ import userRouter from "./routes/user.route";
 const port = parseInt(process.env.PORT) || 8080;
 
 const main = async () => {
+  await createDatabase({ifNotExist: true, charset: "utf8mb4_general_ci", characterSet: "utf8mb4"});
   await createConnection();
 
   const app = express();

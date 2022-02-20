@@ -6,11 +6,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Unique,
 } from "typeorm";
 
 @Entity()
-@Unique(["name"])
 export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
